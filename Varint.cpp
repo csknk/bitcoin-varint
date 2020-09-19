@@ -13,25 +13,30 @@ void Varint<T>::setStartIndexes()
 {
 	startIndexes.push_back(0);
 	for (size_t i = 0; i < inputBytes.size(); i++) {
-		if (inputBytes[i] <= 0x7F && i != (inputBytes.size() - 1)) {
+		if ((inputBytes[i] & 0x80) == 0 && i != (inputBytes.size() - 1)) {
 			startIndexes.push_back(i + 1);
 		}
 	}
 }
 
 template <class T>
-void Varint<T>::decode(size_t start, std::vector<unsigned char>& result)
+ssize_t Varint<T>::decode(size_t start, std::vector<unsigned char>& result)
 {
 	std::vector<unsigned char> tmp;
-	for (size_t i = start, nBytes = 0; i < inputBytes.size(); i++) {
+	ssize_t j = -1;
+	size_t nBytes = 0;
+	for (size_t i = startIndexes[start]; i < inputBytes.size(); i++, j++) {
 		nBytes++;
-		if (inputBytes[i] <= 0x7F) {
+		if ((inputBytes[i] & 0x80) == 0) {
 			tmp.push_back(inputBytes[i] & (0xFF >> 1));
 			break;
 		}
 		tmp.push_back((inputBytes[i] & (0xFF >> 1)) + 1);
 	}
 	base128To256(tmp, result);
+
+	// j is the index of the final byte in this Varint.
+	return j;
 }
 
 template <class T>

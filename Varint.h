@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 
+#include <iomanip>
+
 template <class T>
 class Varint {
 
@@ -18,7 +20,7 @@ private:
 public:
 	Varint(T _inputCollection);
 	void outputResult();
-	void decode(size_t start, std::vector<unsigned char>& result);
+	ssize_t decode(size_t start, std::vector<unsigned char>& result);
 	void shiftAllBytesRight(size_t shift);
 	void static shiftAllBytesRight(T& bytes, size_t shift);
 };
