@@ -9,19 +9,19 @@ First Varint: Block Height
 ```
 C0		84		26
 1100 0000	1000 0100	0010 0110
-100 0000	000 0100	010 0110	// Last 7 bits
+100 0000	000 0100	010 0110	// Take last 7 bits of each byte
 100 0001	000 0101	010 0110	// Add 1 to each byte except last
 ```
 tmp array:
 ```
 41		05		26
-100 0001	000 0101	010 0110	// Add 1 to each byte except last
+100 0001	000 0101	010 0110
 ```
 
 Remove last zero - flag showing coinbase status
 ```
 08		21		53
-0000 1000	0010 0001	0101 0011	// Concatenate
+0000 1000	0010 0001	0101 0011	// Concatenate consecutive bits to get value
 ```
 In decimal: (8 * 256²) + (33 * 256) + 83 = 532819
 
@@ -32,8 +32,8 @@ Second Varint: Amount
 1000 0000	1110 1101	0101 1001
 000 0000	110 1101	101 1001	// Last 7 bits
 000 0001	110 1110	101 1001	// Add 1 to each byte except last
-0000 0000	0111 0111	0101 1001	// Concatenated
-00		77		59
+0000 0000	0111 0111	0101 1001	// Concatenate
+00		77		59		// Result, hexadecimal
 ```
 In decimal: (119 * 256) + 89 = 30553
 
