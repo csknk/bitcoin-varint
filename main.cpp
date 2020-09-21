@@ -31,7 +31,9 @@ uint64_t DecompressAmount(uint64_t x)
 int main()
 {
 	std::vector <unsigned char> test;
-	utilities::hexstringToBytes("c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b", test);
+	utilities::hexstringToBytes("805881d6a88f2c016e4529a080512843f3fbef5c3945376ed8e51b80", test);
+//	utilities::hexstringToBytes("802d3203d926e0e02db441e560910b02ddaa1cb7538d0f5e87374b3dda18be3c0d456b74", test);
+//	utilities::hexstringToBytes("c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b", test);
 	utilities::printToHex(test);
 	Varint t(test);
 	std::vector<unsigned char> first;
@@ -45,7 +47,7 @@ int main()
 	std::cout << "coinbase: " << (coinbase ? "true" : "false") << "\n";
 
 	std::vector<unsigned char> rawAmount;
-	t.decode(1, rawAmount);
+	ssize_t scriptStart = t.decode(1, rawAmount);
 
 	// No right shift for the amount
 	std::string amountDecimalStr;
@@ -60,6 +62,10 @@ int main()
 	std::cout << "amount (Satoshis):\t" << sats << "\n"; 
 	std::cout << "amount (Bitcoin):\t" << sats / 100'000'000. << "\n"; 
 
+	
+	std::vector<unsigned char> script;
+	t.remainingBytesFromIndex((size_t) scriptStart, script);
+	utilities::printToHex(script);
 
 	return 0;
 }

@@ -21,6 +21,7 @@ public:
 	Varint(T _inputCollection);
 	void outputResult();
 	ssize_t decode(size_t start, std::vector<unsigned char>& result);
+	void remainingBytesFromIndex(size_t start, std::vector<unsigned char>& result);
 	void shiftAllBytesRight(size_t shift);
 	void static shiftAllBytesRight(T& bytes, size_t shift);
 };
