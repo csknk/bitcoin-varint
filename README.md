@@ -4,8 +4,10 @@ Bitcoin uses Varints to transmit and store values where the minimum number of by
 
 For example, a block height that is less than or equal to 255 could be stored in a single byte whereas the block height 649392 would require three (unsigned) bytes:
 
+```
 09		E8		B0
 (9 * 256²) +	(232 * 256) +	176 = 649392  
+```
 
 To efficiently allow for such variability, Bitcoin uses a system of variable-length integers such that a minimal amount of space is used to store integers, whilst allowing for integers to be as large or as small as necessary.
 
@@ -25,10 +27,12 @@ To ensure that each integer has a unique representation in the encoding system, 
 | 256 | 0x81 0x00 | 1000 0001 0000 0000 |
 | 65535 | 0x82 0xFE 0x7F | 1000 0010 1111 1110 0111 1111 |
 
-This system is compact - integers 0-127 are represented by 1 byte, 128-16511 require 2 bytes and 16512-2113663 require 3 bytes.
+This system is compact:
+* Integers 0-127 are represented by 1 byte
+* 128-16511 require 2 bytes
+* 16512-2113663 require 3 bytes.
 
 Each integer has a unique encoding, and the encoding is infinite in capacity - integers of any size can be represented.
-
 
 Worked Manual Example
 ---------------------
