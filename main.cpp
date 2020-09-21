@@ -32,29 +32,46 @@ int main()
 {
 	std::vector <unsigned char> test;
 	utilities::hexstringToBytes("805881d6a88f2c016e4529a080512843f3fbef5c3945376ed8e51b80", test);
-//	utilities::hexstringToBytes("802d3203d926e0e02db441e560910b02ddaa1cb7538d0f5e87374b3dda18be3c0d456b74", test);
-//	utilities::hexstringToBytes("c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b", test);
 	utilities::printToHex(test);
+
+	// Initialise an object to access it's Varints by passing in a vector of bytes
 	Varint t(test);
+
+	// Initialise a vector to hold the first result
 	std::vector<unsigned char> first;
 
+	// Decode the first Varint
 	t.decode(0, first);
+
+	// The first Varint in this context represents the block height and coinbase status.
+	// The final bit of the final byte in the decoded varint indicates coinbase status.
 	bool coinbase = first.back() & 1 ? true : false;
+
+	// The bits preceding the least significant bit need to be shifted right to yield the block height.
 	Varint<std::vector<unsigned char>>::shiftAllBytesRight(first, 1);
+
+	// Convert block height represented by first (a base 256 encoded vector of bytes) to a string 
+	// for display purposes.
 	std::string blockHeight;
 	utilities::bytesToDecimal(first, blockHeight);
 	std::cout << "block height: " << blockHeight << "\n";
 	std::cout << "coinbase: " << (coinbase ? "true" : "false") << "\n";
 
+	// The next Varint represents the (compressed) amount.
 	std::vector<unsigned char> rawAmount;
+
+	// The decode() method returns the index of the following byte
 	ssize_t scriptStart = t.decode(1, rawAmount);
 
 	// No right shift for the amount
 	std::string amountDecimalStr;
-	utilities::printToHex(rawAmount);
+	
+	// Make a decimal string for presentation purposes.
 	utilities::bytesToDecimal(rawAmount, amountDecimalStr);
 	std::cout << "amount, compressed, decimal: " <<std::dec << amountDecimalStr << "\n";
 
+	// Convert to a uint64_t type to allow for decompression and further numeric processing
+	// (sats to BTC conversion).
 	char* pEnd;
 	long int a = strtol(amountDecimalStr.c_str(), &pEnd, 10);
 
@@ -62,7 +79,7 @@ int main()
 	std::cout << "amount (Satoshis):\t" << sats << "\n"; 
 	std::cout << "amount (Bitcoin):\t" << sats / 100'000'000. << "\n"; 
 
-	
+	// Remaining bytes relate to ScriptPubKey
 	std::vector<unsigned char> script;
 	t.remainingBytesFromIndex((size_t) scriptStart, script);
 	utilities::printToHex(script);
