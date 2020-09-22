@@ -51,33 +51,34 @@ Start value: `c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b`
 ### First Varint: Block Height
 | | Byte₀| Byte₁ | Byte₂ |
 |-|-|-|-|
-| Start, hex | 0xC0 | 0x84 | 0x26 |
-| Start, bin | 1100 0000 | 1000 0100 | 0010 0110 |
+| Start, hexadecimal | 0xC0 | 0x84 | 0x26 |
+| Start, binary | 1100 0000 | 1000 0100 | 0010 0110 |
 | Last 7 bits of each byte | 100 0000 |	000 0100 | 010 0110 |
 | Add 1 to each byte except last | 100 0001 | 000 0101 | 010 0110 |
 
 tmp array:
+|-|-|-|
 | 0x41 | 0x05 | 0x26 |
 | 100 0001 | 000 0101 |	010 0110 |
 
 Remove last zero - flag showing coinbase status
-```
-0000 1000	0010 0001	0101 0011	// Concatenate consecutive bits to get value
-0x08		0x21		0x53		// Result, hexadecimal
-8		33		83		// Result, decimal
-```
+|-|-|-|-|
+| Concatenate consecutive bits to get value | 0000 1000 | 0010 0001 | 0101 0011 |
+| Result, hexadecimal | 0x08 | 0x21 | 0x53 |	
+| Result, decimal | 8 |	33 | 83 |	
+
 In decimal: (8 * 256²) + (33 * 256) + 83 = 532819
 
 ### Second Varint: Amount
-```
-0x80		0xED		0x59
-1000 0000	1110 1101	0101 1001
-000 0000	110 1101	101 1001	// Last 7 bits
-000 0001	110 1110	101 1001	// Add 1 to each byte except last
-0000 0000	0111 0111	0101 1001	// Concatenate
-0x00		0x77		0x59		// Result, hexadecimal
-00		119		89		// Result, hexadecimal
-```
+|-|-|-|-|
+|					|0x80		|0xED		|0x59		|
+|					|1000 0000	|1110 1101	|0101 1001	|
+| Last 7 bits				| 000 0000	| 110 1101	| 101 1001	|
+| Add 1 to each byte except last	| 000 0001	| 110 1110	| 101 1001	|
+| Concatenate				|0000 0000	|0111 0111	|0101 1001	|
+| Result, hexadecimal			|0x00	| 0x77	|0x59	|
+| Result, decimal			|00	|119	|89	|
+
 In decimal: (119 * 256) + 89 = 30553
 
 References
