@@ -49,8 +49,8 @@ This example takes a value from the `chainstate` database of UTXOs from Bitcoin 
 Start value: `c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b`
 
 ### First Varint: Block Height
-| | Value |
-|-|-|
+| | Byte₀| Byte₁ | Byte₂ |
+|-|-|-|-|
 | Start, hex | 0xC0 | 0x84 | 0x26 |
 | Start, bin | 1100 0000 | 1000 0100 | 0010 0110 |
 | Last 7 bits of each byte | 100 0000 |	000 0100 | 010 0110 |
