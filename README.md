@@ -57,11 +57,13 @@ Start value: `c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b`
 | Add 1 to each byte except last | 100 0001 | 000 0101 | 010 0110 |
 
 tmp array:
+||||
 |-|-|-|
 | 0x41 | 0x05 | 0x26 |
 | 100 0001 | 000 0101 |	010 0110 |
 
 Remove last zero - flag showing coinbase status
+| | Byte₀| Byte₁ | Byte₂ |
 |-|-|-|-|
 | Concatenate consecutive bits to get value | 0000 1000 | 0010 0001 | 0101 0011 |
 | Result, hexadecimal | 0x08 | 0x21 | 0x53 |	
@@ -70,6 +72,7 @@ Remove last zero - flag showing coinbase status
 In decimal: (8 * 256²) + (33 * 256) + 83 = 532819
 
 ### Second Varint: Amount
+| | Byte₀| Byte₁ | Byte₂ |
 |-|-|-|-|
 |					|0x80		|0xED		|0x59		|
 |					|1000 0000	|1110 1101	|0101 1001	|
