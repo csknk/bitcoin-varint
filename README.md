@@ -46,6 +46,8 @@ This example takes a value from the `chainstate` database of UTXOs from Bitcoin 
 * Script type (Third Varint)
 * Unique script value (Remainder of the value)
 
+This worked example is drawn from the README [this GitHUb repo][3] for a Bitcoin chainstate parser in Ruby. 
+
 Start value: `c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b`
 
 ### First Varint: Block Height
@@ -83,6 +85,32 @@ In decimal: (8 * 256²) + (33 * 256) + 83 = 532819
 | Result, decimal			|00	|119	|89	|
 
 In decimal: (119 * 256) + 89 = 30553
+
+Usage
+-----
+Include this repo as a Git submodule.
+
+Build as a static library.
+
+Include `varint.h` in the calling code, and link the library when compiling.
+
+Temp Notes
+----------
+Put the following in the Makefile.
+
+Existing `main.cpp` should be an example.
+
+```
+# Create the .a file:
+# Make object file varint.o
+gcc -c varint.cpp
+
+# Make library archive file:
+ar -crs varint.a varint.o
+
+# Link to library in client
+g++ -W -Wall -std=c++17 -g -o $(OUT) $(OBJECTS) varint.a
+```
 
 References
 ----------

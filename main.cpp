@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Varint.h"
+#include "varint.h"
 #include "utilities.h"
 
 uint64_t DecompressAmount(uint64_t x)
