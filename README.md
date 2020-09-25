@@ -46,7 +46,7 @@ This example takes a value from the `chainstate` database of UTXOs from Bitcoin 
 * Script type (Third Varint)
 * Unique script value (Remainder of the value)
 
-This worked example is drawn from the README [this GitHUb repo][3] for a Bitcoin chainstate parser in Ruby. 
+This worked example is drawn from the README [this GitHub repo][3] for a Bitcoin chainstate parser in Ruby. 
 
 Start value: `c0842680ed5900a38f35518de4487c108e3810e6794fb68b189d8b`
 
