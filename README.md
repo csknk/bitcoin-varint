@@ -40,7 +40,7 @@ Worked Manual Example
 ---------------------
 This example takes a value from the `chainstate` database of UTXOs from Bitcoin Core and decodes the value to provide:
 
-* Block height (First Varint)
+* Block height (First Varint, excluding least significant bit)
 * Coinbase status (Last bit of first Varint)
 * Amount (Second Varint)
 * Script type (Third Varint)
