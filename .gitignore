@@ -1,1 +1,4 @@
 *.a
+bin/
+lib/
+obj/
