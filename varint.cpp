@@ -1,11 +1,79 @@
 #include "varint.h"
+//#include "utilities.h"
+
 #define MAXBITS 8
+
+//UTXO::UTXO(Varint<std::vector<unsigned char>> _inputValue) : inputValue(_inputValue)
+UTXO::UTXO(Varint<std::vector<unsigned char>>& _inputValue)
+{
+	inputValue = _inputValue;
+	setHeight();
+}
+
+void UTXO::setHeight()
+{
+	std::vector<unsigned char> first;
+	inputValue.decode(0, first);
+	// The first Varint in this context represents the block height and coinbase status.
+	// The final bit of the final byte in the decoded varint indicates coinbase status.
+	coinbase = first.back() & 1 ? true : false;
+	
+	// The bits preceding the least significant bit need to be shifted right to yield the block height.
+	// This is because the protocol reserves the least significant bit of this Varint as a boolean
+	// indicator of the coinbase status of this UTXO.
+	Varint<std::vector<unsigned char>>::shiftAllBytesRight(first, 1);
+
+	// Convert block height represented by first (a base 256 encoded vector of bytes) to a string 
+	// as an intermediate to avoid expensive math operations.
+	std::string blockHeight;
+	utilities::bytesToDecimal(first, blockHeight);
+
+	// Convert to a uint64_t type
+	char* pEnd;
+	height = strtol(blockHeight.c_str(), &pEnd, 10);
+}
+
+void UTXO::printUTXO()
+{
+	std::cout << "Block height:\t" << height << "\n";
+	std::cout << "Coinbase:\t" << (coinbase ? "true" : "false") << "\n";
+}
+
+std::ostream& operator<<(std::ostream& os, UTXO& utxo)
+{
+	os << "Block height:\t" << utxo.height << "\n";
+	os << "Coinbase:\t" << (utxo.coinbase ? "true" : "false") << "\n";
+	return os;
+}
+
+template <class T>
+Varint<T>::Varint() {
+	startIndexes = {};
+	inputBytes = {};
+}
 
 template <class T>
 Varint<T>::Varint(T _input) : inputBytes(_input)
 {
 	setStartIndexes();
 	processBytes();
+}
+
+template <class T>
+Varint<T>& Varint<T>::operator=(const Varint<T>& other)
+{
+	for (auto& el : other.inputBytes) {
+		this->inputBytes.push_back(el);
+	}
+	this->setStartIndexes();
+	this->processBytes();
+	return *this;
+}
+
+template <class T>
+Varint<T> Varint<T>::getInputBytes()
+{
+	return inputBytes;
 }
 
 template <class T>
@@ -125,5 +193,6 @@ void Varint<T>::shiftAllBytesRight(T& bytes, size_t shift)
 	}
 }	
 
-
 template class Varint<std::vector<unsigned char>>;
+//template class UTXO<std::vector<unsigned char>>;
+

@@ -14,19 +14,19 @@ namespace utilities {
  *
  * */
 template <typename T>
-void printToHex(T s)
+inline void printToHex(T s)
 {
 	for(size_t i = 0; i < s.size(); i++) {
 		std::cout << std::hex << std::setfill('0') << std::setw(2) << (int)s[i];
 	}
-	std::cout << "\n";
+	std::cout << std::dec << "\n";
 }
 
 /**
  * Print collection of bytes as a hexadecimal string.
  *
  * */
-void stringToHexBytes(const std::string& s, std::vector<unsigned char>& hexBytes)
+inline void stringToHexBytes(const std::string& s, std::vector<unsigned char>& hexBytes)
 {
 	for (size_t i = 0; i < s.size(); i++) {
 		if ((unsigned char)s[i] == 0xff) continue;
@@ -35,7 +35,7 @@ void stringToHexBytes(const std::string& s, std::vector<unsigned char>& hexBytes
 }
 
 template <typename T>
-void switchEndianness(T& collection)
+inline void switchEndianness(T& collection)
 {
 	size_t i = 0, j = collection.size() - 1;
 	while (i < collection.size() / 2) {
@@ -45,7 +45,7 @@ void switchEndianness(T& collection)
 	}	
 }
 
-int hexDigitToInt(char digit)
+inline int hexDigitToInt(char digit)
 {
 	digit = tolower(digit);
 	if (digit >= '0' && digit <='9')
@@ -57,7 +57,7 @@ int hexDigitToInt(char digit)
 }
 
 template <typename T>
-int hexstringToBytes(std::string const&	hexstring, T& result)
+inline int hexstringToBytes(std::string const&	hexstring, T& result)
 {
 	if (hexstring.size() % 2) {
 		std::cerr << "The hexstring is not an even number of characters.\n";
@@ -79,7 +79,7 @@ int hexstringToBytes(std::string const&	hexstring, T& result)
 	return resultLength;
 }
 
-void bytesToHexstring(const std::vector<unsigned char>& bytes, std::string& s)
+inline void bytesToHexstring(const std::vector<unsigned char>& bytes, std::string& s)
 {
 	std::stringstream ss;
 	for (auto b : bytes) {
@@ -88,7 +88,7 @@ void bytesToHexstring(const std::vector<unsigned char>& bytes, std::string& s)
 	s = ss.str();
 }
 
-void bytesToDecimal(const std::vector<unsigned char>& bytes, std::string& result)
+inline void bytesToDecimal(const std::vector<unsigned char>& bytes, std::string& result)
 {
 	size_t resultLen = bytes.size() * 3;
 	std::vector<unsigned char> decimal(resultLen, 0);

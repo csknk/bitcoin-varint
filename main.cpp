@@ -1,6 +1,6 @@
 #include <iostream>
-#include "varint.h"
 #include "utilities.h"
+#include "varint.h"
 
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Core developers
@@ -112,6 +112,12 @@ int main()
 	t.remainingBytesFromIndex((size_t) scriptStart, script);
 	std::cout << "ScriptPubKey(partial): ";
 	utilities::printToHex(script);
+
+	UTXO u(t);
+	u.printUTXO();
+
+	std::cout << u;
+//	std::cout << "height = " << u.height << "\n";
 
 	return 0;
 }
