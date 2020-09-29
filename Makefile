@@ -37,6 +37,6 @@ $(LIB_DIR):
 	mkdir -p $@
 
 clean:
+	rm $(OBJ_DIR)/*
 	rm $(BIN_DIR)/*
 	rm $(LIB_DIR)/*
-	rm $(OBJ_DIR)/*
