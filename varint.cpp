@@ -8,6 +8,7 @@ UTXO::UTXO(Varint<std::vector<unsigned char>>& _inputValue)
 	inputValue = _inputValue;
 	setHeight();
 	setAmount();
+	setScriptPubKey();
 }
 
 void UTXO::setHeight()
@@ -52,6 +53,38 @@ void UTXO::setAmount()
 	amount = DecompressAmount((uint64_t)a);
 }
 
+void UTXO::setScriptPubKey()
+{
+	std::vector<unsigned char> in;
+	inputValue.remainingBytesFromIndex((size_t) scriptStart, in);
+	unsigned char nSize = in[0];
+
+	switch(nSize) {
+
+	// P2PKH Pay to Public Key Hash
+	case 0x00:
+		scriptPubKey.resize(25);
+		scriptPubKey[0] = OP_DUP;
+		scriptPubKey[1] = OP_HASH160;
+		scriptPubKey[2] = 0x14;
+		memcpy(&scriptPubKey[3], &in[1], 20);
+		scriptPubKey[23] = OP_EQUALVERIFY;
+		scriptPubKey[24] = OP_CHECKSIG;
+		break;
+
+	// P2SH Pay to Script Hash
+	case 0x01:
+		scriptPubKey.resize(23);
+		scriptPubKey[0] = OP_HASH160;
+		scriptPubKey[1] = 0x14;
+		memcpy(&scriptPubKey[2], &in[1], 20);
+		scriptPubKey[22] = OP_EQUAL;
+		break;
+	}
+//		return true;
+
+}
+
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2019 The Bitcoin Core developers
 // Distributed under the MIT software license, see the accompanying
@@ -91,9 +124,12 @@ void UTXO::printUTXO()
 
 std::ostream& operator<<(std::ostream& os, UTXO& utxo)
 {
+	std::string scriptPubKeyString;
+       	utilities::bytesToHexstring(utxo.scriptPubKey, scriptPubKeyString);
 	os << "Amount (sats):\t" << utxo.amount << "\n";
 	os << "Block height:\t" << utxo.height << "\n";
 	os << "Coinbase:\t" << (utxo.coinbase ? "true" : "false") << "\n";
+	os << "scriptPubKey:\t" << scriptPubKeyString << "\n";
 	return os;
 }
 

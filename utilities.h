@@ -23,6 +23,19 @@ inline void printToHex(T s)
 }
 
 /**
+ *
+ * */
+template <typename T>
+inline std::ostream& printToHex(std::ostream& os, T s)
+{
+	for(size_t i = 0; i < s.size(); i++) {
+		os << std::hex << std::setfill('0') << std::setw(2) << (int)s[i];
+	}
+	os << std::dec;
+	return os;
+}
+
+/**
  * Print collection of bytes as a hexadecimal string.
  *
  * */
