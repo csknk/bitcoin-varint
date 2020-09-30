@@ -3,11 +3,11 @@
 
 #define MAXBITS 8
 
-//UTXO::UTXO(Varint<std::vector<unsigned char>> _inputValue) : inputValue(_inputValue)
 UTXO::UTXO(Varint<std::vector<unsigned char>>& _inputValue)
 {
 	inputValue = _inputValue;
 	setHeight();
+	setAmount();
 }
 
 void UTXO::setHeight()
@@ -33,6 +33,56 @@ void UTXO::setHeight()
 	height = strtol(blockHeight.c_str(), &pEnd, 10);
 }
 
+void UTXO::setAmount()
+{
+	// The second Varint in the stored database value represents the (compressed) amount.
+	std::vector<unsigned char> rawAmount;
+
+	// The decode() method returns the index of the following byte
+	scriptStart = inputValue.decode(1, rawAmount);
+
+	std::string amountDecimalStr;
+	
+	// Make a decimal string.
+	utilities::bytesToDecimal(rawAmount, amountDecimalStr);
+
+	// Convert to a uint64_t type to allow for decompression and further numeric processing.
+	char* pEnd;
+	long int a = strtol(amountDecimalStr.c_str(), &pEnd, 10);
+	amount = DecompressAmount((uint64_t)a);
+}
+
+// Copyright (c) 2009-2010 Satoshi Nakamoto
+// Copyright (c) 2009-2019 The Bitcoin Core developers
+// Distributed under the MIT software license, see the accompanying
+// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Bitcoin Core `src/compressor.cpp`: https://github.com/bitcoin/bitcoin/blob/0.20/src/compressor.cpp#L168
+uint64_t UTXO::DecompressAmount(uint64_t x)
+{
+	// x = 0  OR  x = 1+10*(9*n + d - 1) + e  OR  x = 1+10*(n - 1) + 9
+	if (x == 0)
+		return 0;
+	x--;
+	// x = 10*(9*n + d - 1) + e
+	int e = x % 10;
+	x /= 10;
+	uint64_t n = 0;
+	if (e < 9) {
+		// x = 9*n + d - 1
+		int d = (x % 9) + 1;
+		x /= 9;
+		// x = n
+		n = x*10 + d;
+	} else {
+		n = x+1;
+	}
+	while (e) {
+		n *= 10;
+		e--;
+	}
+	return n;
+}
+
 void UTXO::printUTXO()
 {
 	std::cout << "Block height:\t" << height << "\n";
@@ -41,6 +91,7 @@ void UTXO::printUTXO()
 
 std::ostream& operator<<(std::ostream& os, UTXO& utxo)
 {
+	os << "Amount (sats):\t" << utxo.amount << "\n";
 	os << "Block height:\t" << utxo.height << "\n";
 	os << "Coinbase:\t" << (utxo.coinbase ? "true" : "false") << "\n";
 	return os;

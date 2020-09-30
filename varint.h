@@ -32,6 +32,9 @@ class UTXO {
 private:
 	Varint<std::vector<unsigned char>> inputValue;
 	void setHeight();
+	void setAmount();
+	ssize_t scriptStart;
+	uint64_t DecompressAmount(uint64_t x);
 public:
 	UTXO();
 	UTXO(Varint<std::vector<unsigned char>>& _inputValue);
@@ -40,6 +43,7 @@ public:
 	int vout;
 	bool coinbase;
 	uint64_t height;
+	uint64_t amount = 0;
 	short scriptType;
 
 	friend std::ostream& operator<<(std::ostream& os, UTXO& utxo);
