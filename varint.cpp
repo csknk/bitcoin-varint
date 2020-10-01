@@ -1,5 +1,4 @@
 #include "varint.h"
-//#include "utilities.h"
 
 #define MAXBITS 8
 
@@ -57,9 +56,9 @@ void UTXO::setScriptPubKey()
 {
 	std::vector<unsigned char> in;
 	inputValue.remainingBytesFromIndex((size_t) scriptStart, in);
-	unsigned char nSize = in[0];
+	scriptType = in[0];
 
-	switch(nSize) {
+	switch(scriptType) {
 
 	// P2PKH Pay to Public Key Hash
 	case 0x00:
@@ -124,12 +123,14 @@ void UTXO::printUTXO()
 
 std::ostream& operator<<(std::ostream& os, UTXO& utxo)
 {
+	const char* scriptDesc = scriptDescription[(size_t)utxo.scriptType];
 	std::string scriptPubKeyString;
        	utilities::bytesToHexstring(utxo.scriptPubKey, scriptPubKeyString);
-	os << "Amount (sats):\t" << utxo.amount << "\n";
-	os << "Block height:\t" << utxo.height << "\n";
-	os << "Coinbase:\t" << (utxo.coinbase ? "true" : "false") << "\n";
-	os << "scriptPubKey:\t" << scriptPubKeyString << "\n";
+	os << "Amount (sats):\t\t" << utxo.amount << "\n";
+	os << "Block height:\t\t" << utxo.height << "\n";
+	os << "Coinbase:\t\t" << (utxo.coinbase ? "true" : "false") << "\n";
+	os << "scriptPubKey:\t\t" << scriptPubKeyString << "\n";
+	os << "Script Description:\t" << scriptDesc << "\n";
 	return os;
 }
 

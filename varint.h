@@ -46,9 +46,16 @@ public:
 	bool coinbase;
 	uint64_t height;
 	uint64_t amount = 0;
-	short scriptType;
+	unsigned char scriptType;
 
 	friend std::ostream& operator<<(std::ostream& os, UTXO& utxo);
+};
+
+/** Map scriptType to string **/
+static const char* scriptDescription[] = {
+	"P2PKH",
+	"P2SH",
+	"P2PK: data is a compressed public key, y = even",
 };
 
 /** Script opcodes */
