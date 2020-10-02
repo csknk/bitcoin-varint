@@ -52,6 +52,17 @@ void UTXO::setAmount()
 	amount = DecompressAmount((uint64_t)a);
 }
 
+/**
+ * Build the scriptPubKey based on the script type (designated by scriptType) and the unique
+ * script data contained in the database record.
+ *
+ * Switch statement based on that found in Bitcoin Core:
+ * See: https://github.com/bitcoin/bitcoin/blob/0.20/src/compressor.cpp#L95
+ * Copyright (c) 2009-2010 Satoshi Nakamoto
+ * Copyright (c) 2009-2019 The Bitcoin Core developers
+ * Distributed under the MIT software license, see the accompanying
+ * file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ * */
 void UTXO::setScriptPubKey()
 {
 	std::vector<unsigned char> in;
@@ -59,9 +70,7 @@ void UTXO::setScriptPubKey()
 	scriptType = in[0];
 
 	switch(scriptType) {
-
-	// P2PKH Pay to Public Key Hash
-	case 0x00:
+	case 0x00: // P2PKH Pay to Public Key Hash
 		scriptPubKey.resize(25);
 		scriptPubKey[0] = OP_DUP;
 		scriptPubKey[1] = OP_HASH160;
@@ -70,18 +79,36 @@ void UTXO::setScriptPubKey()
 		scriptPubKey[23] = OP_EQUALVERIFY;
 		scriptPubKey[24] = OP_CHECKSIG;
 		break;
-
-	// P2SH Pay to Script Hash
-	case 0x01:
+	case 0x01: // P2SH Pay to Script Hash
 		scriptPubKey.resize(23);
 		scriptPubKey[0] = OP_HASH160;
 		scriptPubKey[1] = 0x14;
 		memcpy(&scriptPubKey[2], &in[1], 20);
 		scriptPubKey[22] = OP_EQUAL;
 		break;
+	case 0x02:
+	case 0x03:
+		scriptPubKey.resize(35);
+		scriptPubKey[0] = 33;
+		scriptPubKey[1] = scriptType;
+		memcpy(&scriptPubKey[2], in.data(), 32);
+		scriptPubKey[34] = OP_CHECKSIG;
+		break;
+//	case 0x04:
+//	case 0x05:
+//		unsigned char vch[33] = {};
+//		vch[0] = scriptType - 2;
+//		memcpy(&vch[1], in.data(), 32);
+//		CPubKey pubkey(&vch[0], &vch[33]);
+//		if (!pubkey.Decompress())
+//			return false;
+//		assert(pubkey.size() == 65);
+//		scriptPubKey.resize(67);
+//		scriptPubKey[0] = 65;
+//		memcpy(&scriptPubKey[1], pubkey.begin(), 65);
+//		scriptPubKey[66] = OP_CHECKSIG;
+//		break;
 	}
-//		return true;
-
 }
 
 // Copyright (c) 2009-2010 Satoshi Nakamoto
