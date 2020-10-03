@@ -86,8 +86,8 @@ void UTXO::setScriptPubKey()
 		memcpy(&scriptPubKey[2], &in[1], 20);
 		scriptPubKey[22] = OP_EQUAL;
 		break;
-	case 0x02:
-	case 0x03:
+	case 0x02: // upcoming data is a compressed public key (nsize makes up part of the public key) [y=even]
+	case 0x03: // upcoming data is a compressed public key (nsize makes up part of the public key) [y=odd]
 		scriptPubKey.resize(35);
 		scriptPubKey[0] = 33;
 		scriptPubKey[1] = scriptType;
