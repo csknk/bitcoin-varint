@@ -66,8 +66,14 @@ void UTXO::setAmount()
 void UTXO::setScriptPubKey()
 {
 	std::vector<unsigned char> in;
+//	inputValue.remainingBytesFromIndex(2, in);
+
+	std::vector<unsigned char> nSize;
+	scriptStart = inputValue.decode(2, nSize);
+
 	inputValue.remainingBytesFromIndex((size_t) scriptStart, in);
-	scriptType = in[0];
+	// Wrong - temporary
+	scriptType = nSize[0] < 6 ? nSize[0] : -1;
 
 	switch(scriptType) {
 	case 0x00: // P2PKH Pay to Public Key Hash
@@ -83,7 +89,8 @@ void UTXO::setScriptPubKey()
 		scriptPubKey.resize(23);
 		scriptPubKey[0] = OP_HASH160;
 		scriptPubKey[1] = 0x14;
-		memcpy(&scriptPubKey[2], &in[1], 20);
+//		memcpy(&scriptPubKey[2], &in[1], 20);
+		memcpy(&scriptPubKey[2], &in[0], 20);
 		scriptPubKey[22] = OP_EQUAL;
 		break;
 	case 0x02: // upcoming data is a compressed public key (nsize makes up part of the public key) [y=even]

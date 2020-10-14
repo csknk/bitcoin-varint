@@ -36,6 +36,7 @@ private:
 	void setAmount();
 	void setScriptPubKey();
 	ssize_t scriptStart;
+	std::vector<unsigned char> nSize;
 	uint64_t DecompressAmount(uint64_t x);
 public:
 	UTXO();
@@ -46,7 +47,7 @@ public:
 	bool coinbase;
 	uint64_t height;
 	uint64_t amount = 0;
-	unsigned char scriptType;
+	ssize_t scriptType;
 
 	friend std::ostream& operator<<(std::ostream& os, UTXO& utxo);
 };
